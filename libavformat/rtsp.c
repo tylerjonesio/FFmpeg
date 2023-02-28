@@ -912,6 +912,7 @@ static void rtsp_parse_transport(AVFormatContext *s,
     char profile[16];
     char lower_transport[16];
     char parameter[16];
+    RTSPState *rt = s->priv_data;
     RTSPTransportField *th;
     char buf[256];
 
@@ -953,7 +954,9 @@ static void rtsp_parse_transport(AVFormatContext *s,
         } else {
             break;
         }
-        if (!av_strcasecmp(lower_transport, "TCP"))
+        
+        if (!av_strcasecmp(lower_transport, "TCP") ||
+            (!av_strcasecmp(lower_transport, "") && rt->rtsp_flags & RTSP_FLAG_PREFER_TCP))
             th->lower_transport = RTSP_LOWER_TRANSPORT_TCP;
         else
             th->lower_transport = RTSP_LOWER_TRANSPORT_UDP;
