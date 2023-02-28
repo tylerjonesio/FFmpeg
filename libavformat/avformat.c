@@ -36,6 +36,7 @@
 #include "avio.h"
 #include "demux.h"
 #include "internal.h"
+#include "rtsp.h"
 
 void ff_free_stream(AVStream **pst)
 {
@@ -787,4 +788,9 @@ int ff_format_io_close(AVFormatContext *s, AVIOContext **pb)
     }
     *pb = NULL;
     return ret;
+}      
+      
+int avformat_rtsp_write_packet(AVFormatContext *s, AVPacket *pkt)
+{
+    return rtsp_write_packet(s, pkt);
 }

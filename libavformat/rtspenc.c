@@ -178,7 +178,7 @@ int ff_rtsp_tcp_write_packet(AVFormatContext *s, RTSPStream *rtsp_st)
     return ffio_open_dyn_packet_buf(&rtpctx->pb, rt->pkt_size);
 }
 
-static int rtsp_write_packet(AVFormatContext *s, AVPacket *pkt)
+int rtsp_write_packet(AVFormatContext *s, AVPacket *pkt)
 {
     RTSPState *rt = s->priv_data;
     RTSPStream *rtsp_st;
