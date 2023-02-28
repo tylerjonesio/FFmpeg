@@ -628,6 +628,15 @@ int ff_rtsp_setup_input_streams(AVFormatContext *s, RTSPMessageHeader *reply)
                    "Require: com.real.retain-entity-for-setup\r\n",
                    sizeof(cmd));
     }
+
+    /* Send REQUIRE header for ONVIF/RTSP talkback */
+    if (rt->rtsp_flags & RTSP_FLAG_REQUIRE_BACKCHANNEL) {
+        av_log(s, AV_LOG_VERBOSE, "Setting backchannel require header for RTSP stream", NULL);
+        av_strlcat(cmd,
+                   "Require: www.onvif.org/ver20/backchannel",
+                   sizeof(cmd));
+    }
+    
     ff_rtsp_send_cmd(s, "DESCRIBE", rt->control_uri, cmd, reply, &content);
     if (reply->status_code != RTSP_STATUS_OK) {
         av_freep(&content);

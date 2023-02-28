@@ -430,6 +430,9 @@ typedef struct RTSPState {
 #define RTSP_FLAG_PREFER_TCP  0x10   /**< Try RTP via TCP first if possible. */
 #define RTSP_FLAG_SATIP_RAW   0x20   /**< Export SAT>IP stream as raw MPEG-TS */
 
+#define RTSP_FLAG_REQUIRE_BACKCHANNEL   0x40   /**Set the require header for RTSP talk back */
+
+
 typedef struct RTSPSource {
     char addr[128]; /**< Source-specific multicast include source IP address (from SDP content) */
 } RTSPSource;

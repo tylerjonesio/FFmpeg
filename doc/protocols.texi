@@ -1220,6 +1220,8 @@ Accept packets only from negotiated peer address and port.
 Act as a server, listening for an incoming connection.
 @item prefer_tcp
 Try TCP for RTP transport first, if TCP is available as RTSP RTP transport.
+@item require_backchannel
+Send the ONVIF require header for backchannel audio
 @end table
 
 Default value is @samp{none}.
