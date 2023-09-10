@@ -567,15 +567,6 @@ static int rtsp_read_play(AVFormatContext *s)
                      rt->seek_timestamp / AV_TIME_BASE,
                      rt->seek_timestamp / (AV_TIME_BASE / 1000) % 1000);
         }
-        
-        /* Send REQUIRE header for ONVIF/RTSP talkback */
-        if (rt->rtsp_flags & RTSP_FLAG_REQUIRE_BACKCHANNEL) {
-            av_log(s, AV_LOG_VERBOSE, "Setting PLAY backchannel require header for RTSP stream", NULL);
-            av_strlcat(cmd,
-                       "Require: www.onvif.org/ver20/backchannel\r\n",
-                       sizeof(cmd));
-        }
-        
         ff_rtsp_send_cmd(s, "PLAY", rt->control_uri, cmd, reply, NULL);
         if (reply->status_code != RTSP_STATUS_OK) {
             return ff_rtsp_averror(reply->status_code, -1);
@@ -640,9 +631,9 @@ int ff_rtsp_setup_input_streams(AVFormatContext *s, RTSPMessageHeader *reply)
 
     /* Send REQUIRE header for ONVIF/RTSP talkback */
     if (rt->rtsp_flags & RTSP_FLAG_REQUIRE_BACKCHANNEL) {
-        av_log(s, AV_LOG_VERBOSE, "Setting DESCRIBE backchannel require header for RTSP stream", NULL);
+        av_log(s, AV_LOG_VERBOSE, "Setting backchannel require header for RTSP stream", NULL);
         av_strlcat(cmd,
-                   "Require: www.onvif.org/ver20/backchannel\r\n",
+                   "Require: www.onvif.org/ver20/backchannel",
                    sizeof(cmd));
     }
     

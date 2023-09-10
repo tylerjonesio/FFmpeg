@@ -568,13 +568,7 @@ static void sdp_parse_line(AVFormatContext *s, SDPParseState *s1,
                    sizeof(rtsp_st->control_url));
         break;
     case 'a':
-        if (av_strstart(p, "sendonly", &p)) {
-            /* Set the backchannel enabled flag for this stream */
-            rtsp_st = rt->rtsp_streams[rt->nb_rtsp_streams - 1];
-            rtsp_st->backchannel_enabled = 1;
-            st = s->streams[s->nb_streams - 1];
-            av_dict_set(&st->metadata, "backchannel_enabled", "true", 0);
-        } else if (av_strstart(p, "control:", &p)) {
+        if (av_strstart(p, "control:", &p)) {
             if (rt->nb_rtsp_streams == 0) {
                 if (!strncmp(p, "rtsp://", 7))
                     av_strlcpy(rt->control_uri, p,
@@ -961,7 +955,8 @@ static void rtsp_parse_transport(AVFormatContext *s,
             break;
         }
         
-        if (!av_strcasecmp(lower_transport, "TCP"))
+        if (!av_strcasecmp(lower_transport, "TCP") ||
+            (!av_strcasecmp(lower_transport, "") && rt->rtsp_flags & RTSP_FLAG_PREFER_TCP))
             th->lower_transport = RTSP_LOWER_TRANSPORT_TCP;
         else
             th->lower_transport = RTSP_LOWER_TRANSPORT_UDP;
@@ -993,9 +988,6 @@ static void rtsp_parse_transport(AVFormatContext *s,
                     p++;
                     rtsp_parse_range(&th->interleaved_min,
                                      &th->interleaved_max, &p);
-                    
-                    if (!av_strcasecmp(lower_transport, ""))
-                        th->lower_transport = RTSP_LOWER_TRANSPORT_TCP;
                 }
             } else if (!strcmp(parameter, "multicast")) {
                 if (th->lower_transport == RTSP_LOWER_TRANSPORT_UDP)
@@ -1605,15 +1597,6 @@ int ff_rtsp_make_setup_request(AVFormatContext *s, const char *host, int port,
                         "RealChallenge2: %s, sd=%s\r\n",
                         rt->session_id, real_res, real_csum);
         }
-        
-        /* Send SETUP header for ONVIF/RTSP talkback */
-        if ((rt->rtsp_flags & RTSP_FLAG_REQUIRE_BACKCHANNEL) && (rtsp_st->backchannel_enabled == 1)) {
-            av_log(s, AV_LOG_VERBOSE, "Setting backchannel require header for RTSP stream", NULL);
-            av_strlcat(cmd,
-                       "Require: www.onvif.org/ver20/backchannel\r\n",
-                       sizeof(cmd));
-        }
-        
         ff_rtsp_send_cmd(s, "SETUP", rtsp_st->control_url, cmd, reply, NULL);
         if (reply->status_code == 461 /* Unsupported protocol */ && i == 0) {
             err = 1;

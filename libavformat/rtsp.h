@@ -482,9 +482,6 @@ typedef struct RTSPStream {
 
     /** SSRC for this stream, to allow identifying RTCP packets before the first RTP packet */
     uint32_t ssrc;
-    
-    /** ONVIF Backchannel audio is enabled for this stream */
-    int backchannel_enabled;
 
     char crypto_suite[40];
     char crypto_params[100];
@@ -629,11 +626,6 @@ int ff_rtsp_tcp_read_packet(AVFormatContext *s, RTSPStream **prtsp_st,
  * Send buffered packets over TCP.
  */
 int ff_rtsp_tcp_write_packet(AVFormatContext *s, RTSPStream *rtsp_st);
-
-/**
-* Write RTSP packet to stream
-*/
-int rtsp_write_packet(AVFormatContext *s, AVPacket *pkt);
 
 /**
  * Receive one packet from the RTSPStreams set up in the AVFormatContext

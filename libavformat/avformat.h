@@ -2901,11 +2901,6 @@ int avformat_transfer_internal_stream_timing_info(const AVOutputFormat *ofmt,
 AVRational av_stream_get_codec_timebase(const AVStream *st);
 
 /**
-* Write RTSP packet
-*/
-int avformat_rtsp_write_packet(AVFormatContext *s, AVPacket *pkt);
-
-/**
  * @}
  */
 
