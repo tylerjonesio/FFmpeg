@@ -955,8 +955,7 @@ static void rtsp_parse_transport(AVFormatContext *s,
             break;
         }
         
-        if (!av_strcasecmp(lower_transport, "TCP") ||
-            (!av_strcasecmp(lower_transport, "") && rt->rtsp_flags & RTSP_FLAG_PREFER_TCP))
+        if (!av_strcasecmp(lower_transport, "TCP"))
             th->lower_transport = RTSP_LOWER_TRANSPORT_TCP;
         else
             th->lower_transport = RTSP_LOWER_TRANSPORT_UDP;
@@ -988,6 +987,8 @@ static void rtsp_parse_transport(AVFormatContext *s,
                     p++;
                     rtsp_parse_range(&th->interleaved_min,
                                      &th->interleaved_max, &p);
+                    if (!av_strcasecmp(lower_transport, ""))
+                        th->lower_transport = RTSP_LOWER_TRANSPORT_TCP;
                 }
             } else if (!strcmp(parameter, "multicast")) {
                 if (th->lower_transport == RTSP_LOWER_TRANSPORT_UDP)
